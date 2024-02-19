@@ -23,6 +23,9 @@ import pandas as pd
 import datetime as dt
 from random import randint
 
+# my_email = email
+# app_password = app password
+
 # dictionary of people with their birthdays and emails
 data = pd.read_csv("birthdays.csv")
 birthday_dict = {row['name']: {"email": row['email'], "month":row['month'], "day":row['day']} for (index, row) in data.iterrows()}
@@ -45,7 +48,19 @@ try:
     with open(f"./letter_templates/letter_{letter_number}.txt") as file:
         template = file.read()
         filled_letter = template.replace("[NAME]", celebrant)
-        with open("birthday_email", "w") as birthday_email:
-            birthday_email.write(filled_letter)
+except NameError:
+    pass
+
+# send the email to the birthday person
+try:
+    print(email)
+    with smtplib.SMTP("smtp.gmail.com", timeout=120, port=587) as connection:
+        connection.starttls()
+        connection.login(user=my_email, password=app_password)
+        connection.sendmail(
+            from_addr=my_email,
+            to_addrs=email,
+            msg=f"Subject:Happy Birthday!\n\n{filled_letter}"
+        )
 except NameError:
     pass
